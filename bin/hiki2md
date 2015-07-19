@@ -1,0 +1,35 @@
+# vim: ft=perl
+use strict;
+use warnings;
+use feature qw( say );
+
+use App::hiki2md;
+use File::Slurp qw( read_file );
+
+my $file = shift;
+
+die "no file specified" unless $file;
+die "not exist: $file" unless -f $file;
+
+my $text = read_file($file);
+
+# リンク
+$text =~ s/\[\[([\n]+)\|([\n]+)\]\]/[$1]($2)/msg;
+
+# 箇条書き
+$text =~ s/^\*{3}/        -/msg;
+$text =~ s/^\*{2}/    -/msg;
+$text =~ s/^\*/-/msg;
+
+$text =~ s/^#{3}/        1./msg;
+$text =~ s/^#{2}/    1./msg;
+$text =~ s/^#/1./msg;
+
+# 見出し
+$text =~ s/^!{5}/#####/msg;
+$text =~ s/^!{4}/####/msg;
+$text =~ s/^!{3}/###/msg;
+$text =~ s/^!{2}/##/msg;
+$text =~ s/^!/#/msg;
+
+say $text;
