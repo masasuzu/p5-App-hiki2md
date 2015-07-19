@@ -28,13 +28,7 @@ App::hiki2md is ...
 
 =over 4
 
-=item * 整形済みテキスト
-
 =item * テーブル
-
-=item * 文字装飾
-
-=item * 引用
 
 =item * 用語定義
 

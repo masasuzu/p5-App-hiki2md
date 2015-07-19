@@ -52,5 +52,16 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/masasuzu/p5-App-hiki2md/issues"
+      },
+      "homepage" : "https://github.com/masasuzu/p5-App-hiki2md",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/masasuzu/p5-App-hiki2md.git",
+         "web" : "https://github.com/masasuzu/p5-App-hiki2md"
+      }
+   },
    "version" : "0.01"
 }
