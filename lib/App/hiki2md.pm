@@ -8,6 +8,11 @@ use File::Slurp qw( read_file );
 
 our $VERSION = "0.01";
 
+# TODO: テーブルとか厳密に変換したいならば、
+#       今のように複数行まとめて置換するのではなく、
+#       行単位で処理していかないとつらい。
+#
+
 
 sub run {
     my ($class, $file) = @_;
@@ -80,6 +85,8 @@ App::hiki2md is ...
 =item * テーブル
 
 =item * 用語定義
+
+=item * プラグイン定義の削除
 
 =back
 
