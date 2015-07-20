@@ -21,7 +21,15 @@ sub run {
 
     my $text = read_file($file);
 
-    # コメント
+
+    # プラグイン削除
+    # single line
+    $text =~ s/^{{[^\n]+}}$//msg;
+
+    # multi line
+    $text =~ s/^{{.+}}$//msg;
+
+    # コメント削除
     $text =~ s{^//.+$}{}msg;
 
     # リンク
@@ -85,8 +93,6 @@ App::hiki2md is ...
 =item * テーブル
 
 =item * 用語定義
-
-=item * プラグイン定義の削除
 
 =back
 
