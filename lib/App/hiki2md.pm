@@ -16,6 +16,9 @@ sub run {
 
     my $text = read_file($file);
 
+    # コメント
+    $text =~ s{^//.+$}{}msg;
+
     # リンク
     $text =~ s/\[\[([\n]+)\|([\n]+)\]\]/[$1]($2)/msg;
 
@@ -77,8 +80,6 @@ App::hiki2md is ...
 =item * テーブル
 
 =item * 用語定義
-
-=item * コメント
 
 =back
 
