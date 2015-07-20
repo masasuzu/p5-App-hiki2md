@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/masasuzu/p5-App-hiki2md.svg?branch=master)](https://travis-ci.org/masasuzu/p5-App-hiki2md)
 # NAME
 
 App::hiki2md - convert hiki document to markdown.
