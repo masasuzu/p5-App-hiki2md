@@ -1,3 +1,5 @@
+requires 'File::Slurp';
+requires 'feature';
 requires 'perl', '5.008001';
 
 on configure => sub {
@@ -6,4 +8,5 @@ on configure => sub {
 
 on test => sub {
     requires 'Test::More', '0.98';
+    requires 'Text::Diff';
 };
