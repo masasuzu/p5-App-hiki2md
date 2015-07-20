@@ -1,4 +1,4 @@
 name = "App-hiki2md"
-badges = ["travis"]
+badges = ["travis", "coveralls"]
 module_maker="ModuleBuildTiny"
 
