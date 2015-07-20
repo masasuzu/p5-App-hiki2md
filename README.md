@@ -14,7 +14,10 @@ App::hiki2md is ...
 
 - テーブル
 - 用語定義
-- コメント
+
+# SEE ALSO
+
+http://hikiwiki.org/ja/TextFormattingRules.html
 
 # LICENSE
 
