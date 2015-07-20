@@ -1,10 +1,56 @@
+# vim: ft=perl
 package App::hiki2md;
 use 5.008001;
 use strict;
 use warnings;
+use feature qw( say );
+use File::Slurp qw( read_file );
 
 our $VERSION = "0.01";
 
+
+sub run {
+    my ($class, $file) = @_;
+    die "no file specified" unless $file;
+    die "not exist: $file" unless -f $file;
+
+    my $text = read_file($file);
+
+    # リンク
+    $text =~ s/\[\[([\n]+)\|([\n]+)\]\]/[$1]($2)/msg;
+
+    # 箇条書き
+    $text =~ s/^\*{3}/        -/msg;
+    $text =~ s/^\*{2}/    -/msg;
+    $text =~ s/^\*/-/msg;
+
+    $text =~ s/^#{3}/        1./msg;
+    $text =~ s/^#{2}/    1./msg;
+    $text =~ s/^#/1./msg;
+
+    # 見出し
+    $text =~ s/^!{5}/#####/msg;
+    $text =~ s/^!{4}/####/msg;
+    $text =~ s/^!{3}/###/msg;
+    $text =~ s/^!{2}/##/msg;
+    $text =~ s/^!/#/msg;
+
+    # 整形済みテキスト
+    $text =~ s/^[ \t]+/    /msg;
+    $text =~ s/^<<<\n(.+)\n>>>$/```\n$1\n```/msg;
+
+    # 強調
+    $text =~ s/'''([^\n]+)'''/**$1**/msg;
+    $text =~ s/''([^\n]+)''/*$1*/msg;
+
+    # 取り消し
+    $text =~ s/==([^\n]+)==/~~$1~~/msg;
+
+    # 引用
+    $text =~ s/^""/>/msg;
+
+    say $text;
+}
 
 
 1;
@@ -35,6 +81,10 @@ App::hiki2md is ...
 =item * コメント
 
 =back
+
+=head1 SEE ALSO
+
+http://hikiwiki.org/ja/TextFormattingRules.html
 
 =head1 LICENSE
 
