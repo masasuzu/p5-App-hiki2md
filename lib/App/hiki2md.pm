@@ -19,9 +19,13 @@ sub run {
     die "no file specified" unless $file;
     die "not exist: $file" unless -f $file;
 
-    my $text = read_file($file);
+    my $hiki_text = read_file($file);
+    my $md_text = $class->convert($hiki_text);
+    say $md_text;
+}
 
-
+sub convert {
+    my ($class, $text) = @_;
     # プラグイン削除
     # single line
     $text =~ s/^{{[^\n]+}}$//msg;
@@ -65,7 +69,7 @@ sub run {
     # 引用
     $text =~ s/^""/>/msg;
 
-    say $text;
+    return $text;
 }
 
 
