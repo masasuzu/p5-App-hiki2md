@@ -28,46 +28,46 @@ sub convert {
     my ($class, $text) = @_;
     # プラグイン削除
     # single line
-    $text =~ s/^{{[^\n]+}}$//msg;
+    $text =~ s/^{{[^\n]+}}$//mg;
 
     # multi line
     $text =~ s/^{{.+}}$//msg;
 
     # コメント削除
-    $text =~ s{^//[^\n]+$}{}msg;
+    $text =~ s{^//[^\n]+$}{}mg;
 
     # リンク
-    $text =~ s/\[{2}([^\[\]\n\|].+?)\|([^\[\]\n\|]+?)\]{2}/[$1]($2)/msg;
+    $text =~ s/\[{2}([^\[\]\n\|]+?)\|([^\[\]\n\|]+?)\]{2}/[$1]($2)/mg;
 
     # 箇条書き
-    $text =~ s/^[*]{3}/        -/msg;
-    $text =~ s/^[*]{2}/    -/msg;
-    $text =~ s/^[*]/-/msg;
+    $text =~ s/^[*]{3}/        -/mg;
+    $text =~ s/^[*]{2}/    -/mg;
+    $text =~ s/^[*]/-/mg;
 
-    $text =~ s/^#{3}/        1./msg;
-    $text =~ s/^#{2}/    1./msg;
-    $text =~ s/^#/1./msg;
+    $text =~ s/^#{3}/        1./mg;
+    $text =~ s/^#{2}/    1./mg;
+    $text =~ s/^#/1./mg;
 
     # 見出し
-    $text =~ s/^!{5}/#####/msg;
-    $text =~ s/^!{4}/####/msg;
-    $text =~ s/^!{3}/###/msg;
-    $text =~ s/^!{2}/##/msg;
-    $text =~ s/^!/#/msg;
+    $text =~ s/^!{5}/#####/mg;
+    $text =~ s/^!{4}/####/mg;
+    $text =~ s/^!{3}/###/mg;
+    $text =~ s/^!{2}/##/mg;
+    $text =~ s/^!/#/mg;
 
     # 整形済みテキスト
-    $text =~ s/^[ \t]+/    /msg;
+    $text =~ s/^[ \t]+/    /mg;
     $text =~ s/^<<<\n(.+)\n>>>$/```\n$1\n```/msg;
 
     # 強調
-    $text =~ s/'''([^\n']+)'''/**$1**/msg;
-    $text =~ s/''([^\n']+)''/*$1*/msg;
+    $text =~ s/'''([^\n']+)'''/**$1**/mg;
+    $text =~ s/''([^\n']+)''/*$1*/mg;
 
     # 取り消し
-    $text =~ s/==([^\n=]+)==/~~$1~~/msg;
+    $text =~ s/==([^\n=]+)==/~~$1~~/mg;
 
     # 引用
-    $text =~ s/^""/>/msg;
+    $text =~ s/^""/>/mg;
 
     return $text;
 }
