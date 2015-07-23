@@ -8,69 +8,94 @@ use File::Slurp qw( read_file );
 
 our $VERSION = "0.01";
 
-# TODO: テーブルとか厳密に変換したいならば、
-#       今のように複数行まとめて置換するのではなく、
-#       行単位で処理していかないとつらい。
-#
-
-
 sub run {
     my ($class, $file) = @_;
     die "no file specified" unless $file;
     die "not exist: $file" unless -f $file;
 
-    my $hiki_text = read_file($file);
-    my $md_text = $class->convert($hiki_text);
+    open my $fh, '<', $file;
+    my $md_text = $class->convert($fh);
     say $md_text;
 }
 
 sub convert {
-    my ($class, $text) = @_;
-    # プラグイン削除
-    # single line
-    $text =~ s/^{{[^\n]+}}$//mg;
+    my ($class, $fh) = @_;
 
-    # multi line
-    $text =~ s/^{{.+}}$//msg;
+    my @outputs;
 
-    # コメント削除
-    $text =~ s{^//[^\n]+$}{}mg;
+    my $in_plugin_block;
+    my $in_table_block;
+    my $in_preformated_block;
+    while (my $line = <$fh>) {
+        chomp $line;
+        # プラグイン削除
+        if ($in_plugin_block) {
+            if ($line =~ m/}}\z/) {
+                undef $in_plugin_block;
+            }
+            next;
+        }
+        if ($line =~ m/\A{{/) {
+            # single line
+            next if $line =~ m/\A{{.+}}\z/;
+            $in_plugin_block = 1;
+        }
+        if ($in_preformated_block) {
+            if ($line =~ m/\A>>>/) {
+                undef $in_preformated_block;
+                push @outputs, '```';
 
-    # リンク
-    $text =~ s/\[{2}([^\[\]\n\|]+?)\|([^\[\]\n\|]+?)\]{2}/[$1]($2)/mg;
+                next;
+            }
+            push @outputs, $line;
+            next;
+        }
+        if ($line =~ m/\A<<<\z/) {
+            $in_preformated_block = 1;
+            push @outputs, '```';
+            next;
+        }
 
-    # 整形済みテキスト
-    # FIXME: 整形済みテキストの中にhiki文法が含まれてたら対応出来ない。
-    $text =~ s/^[ \t]+/    /mg;
-    $text =~ s/^<<<\n(.+)\n>>>$/```\n$1\n```/msg;
+        # コメント削除
+        next if $line =~ m{\A//.+\z};
 
-    # 箇条書き
-    $text =~ s/^[*]{3}/        -/mg;
-    $text =~ s/^[*]{2}/    -/mg;
-    $text =~ s/^[*]/-/mg;
+        # 整形済みテキスト
+        $line =~ s/\A[ \t]+/    /;
 
-    $text =~ s/^#{3}/        1./mg;
-    $text =~ s/^#{2}/    1./mg;
-    $text =~ s/^#/1./mg;
+        # 引用
+        $line =~ s/\A""/>/;
 
-    # 見出し
-    $text =~ s/^!{5}/#####/mg;
-    $text =~ s/^!{4}/####/mg;
-    $text =~ s/^!{3}/###/mg;
-    $text =~ s/^!{2}/##/mg;
-    $text =~ s/^!/#/mg;
+        # リンク
+        $line =~ s/\[{2}([^\[\]\|]+?)\|([^\[\]\|]+?)\]{2}/[$1]($2)/g;
 
-    # 強調
-    $text =~ s/'''([^\n']+)'''/**$1**/mg;
-    $text =~ s/''([^\n']+)''/*$1*/mg;
 
-    # 取り消し
-    $text =~ s/==([^\n=]+)==/~~$1~~/mg;
+        # 箇条書き
+        $line =~ s/\A[*]{3}/        -/;
+        $line =~ s/\A[*]{2}/    -/;
+        $line =~ s/\A[*]/-/;
 
-    # 引用
-    $text =~ s/^""/>/mg;
+        $line =~ s/\A#{3}/        1./;
+        $line =~ s/\A#{2}/    1./;
+        $line =~ s/\A#/1./;
 
-    return $text;
+        # 見出し
+        $line =~ s/\A!{5}/#####/;
+        $line =~ s/\A!{4}/####/;
+        $line =~ s/\A!{3}/###/;
+        $line =~ s/\A!{2}/##/;
+        $line =~ s/\A!/#/;
+
+        # 強調
+        $line =~ s/'''(.+)'''/**$1**/g;
+        $line =~ s/''(.+)''/*$1*/g;
+
+        # 取り消し
+        $line =~ s/==(.+)==/~~$1~~/g;
+        push @outputs, $line;
+    }
+
+
+    return join("\n", @outputs);
 }
 
 
